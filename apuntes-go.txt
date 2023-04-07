@@ -125,6 +125,33 @@ func producto(w http.ResponseWriter, r *http.Request) {
         html += "</html>";
         }
 
+
+Ejecutamos para añadir productos:
+
+curl -X POST -d "add=patata" 127.0.0.1:8080/producto
+Producto añadido correctamente%
+curl -X POST -d "add=tomate" 127.0.0.1:8080/producto
+Producto añadido correctamente%
+
+Ver productos:
+
+curl 127.0.0.1:8080/producto?prod=0
+<html><body><h1>Producto tomate</h1></body></html>%    
+
+curl 127.0.0.1:8080/producto?prod=1
+<html><body><h1>Producto patata</h1></body></html>%   
+
+Curioso:
+
+ curl 127.0.0.1:8080/productos
+<html><body><h1>Hola Mundo</h1></body></html>%     
+
+ curl 127.0.0.1:8080/producto/
+<html><body><h1>Hola Mundo</h1></body></html>%
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
 Redirecciones y errores en servidores web con Go
 
 Continuamos para bingo con las redirecciones y los errores(algo tan importante para los SEO :) ):
