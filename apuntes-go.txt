@@ -30,6 +30,20 @@ Podemos servir contenido estático con Go solamente añadiendo estas dos lí­ne
 fs := http.FileServer(http.Dir("./static"))
 http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+
+Para ejecutar por consola o en navegador web:
+
+Por consola:
+curl 127.0.0.1:8080/static/hola.css
+
+Por navegador:
+127.0.0.1:8080/static/hola.css
+
+Nos muestra el contenido de css.
+
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+
 Servir contenido dinámico con Golang
 
 Hemos usado dos métodos para servir contenido dinámico, el primero, definir una ruta y crear una función a parte que básicamente devuelve el código HTML desde un string:
