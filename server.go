@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func main() {
@@ -21,6 +22,8 @@ func main() {
 		fmt.Fprintln(w, "RemoteAddr: ", req.RemoteAddr)
 	})
 
+	http.HandleFunc("/producto", producto)
+
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -34,4 +37,50 @@ func home(w http.ResponseWriter, r *http.Request) {
 	html += "</html>"
 	// Le pasamos a w el string previamente convertido a array de bytes
 	w.Write([]byte(html))
+}
+
+// Lectura de parámetros GET y POST con Go
+
+// Para la lectura de parámetros GET y POST nos hemos montado un pequeño mantenimiento de productos en una función, aquí­ tenéis el código:
+var productos []string
+
+func producto(w http.ResponseWriter, r *http.Request) {
+	// Parseamos formulario
+	r.ParseForm()
+	// Pedimos parametro add
+	add, okForm := r.Form["add"]
+
+	if okForm && len(add) == 1 {
+		productos = append(productos, string(add[0]))
+		w.Write([]byte("Producto añadido correctamente"))
+
+		return
+	}
+	// Nos devuelve dos variables,el propio parametro y si ha podido recojerlo de la ruta
+	prod, ok := r.URL.Query()["prod"]
+
+	if ok && len(prod) == 1 {
+		// convertimos el prod1 a asci a string
+		pos, err := strconv.Atoi(prod[0])
+
+		if err != nil {
+			return
+		}
+
+		html := "<html>"
+		html += "<body>"
+		html += "<h1>Producto " + productos[pos] + "</h1>"
+		html += "</body>"
+		html += "</html>"
+
+		w.Write([]byte(html))
+
+		return
+	}
+
+	html := "<html>"
+	html += "<body>"
+	html += "<h1>Total Productos " + strconv.Itoa(len(productos)) + "</h1>"
+	html += "</body>"
+	html += "</html>"
 }
