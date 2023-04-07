@@ -175,6 +175,18 @@ http.HandleFunc("/cabeceras", func(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintln(w, "{ \"hola\":1 }")
 		})
 
+
+Por consola:
+ curl http://127.0.0.1:8080/cabeceras --verbose
+
+Por web:
+http://127.0.0.1:8080/cabeceras
+
+
+
+///////////////////////////////////////
+///////////////////////////////////////
+
 Uso de plantillas en Go
 
 En los tiempos que corren es super importante usar plantillas para implementar las vistas y tenerlas separadas de los controladores(Patrón MVC, modelo-vista-controlador). Tendremos que importar el módulo "html/templates" y aquí­ tenéis el código:

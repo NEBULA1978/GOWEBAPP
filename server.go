@@ -33,6 +33,14 @@ func main() {
 		http.Error(w, "Error chungo", 501)
 	})
 
+	// Tenemos dos métodos para añadir cabeceras en nuestras aplicaciones Go: "Add" que añadirá la cabecera tantas veces como queramos y "Set" que solo pondrá una vez la cabecera:
+	http.HandleFunc("/cabeceras", func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Add("Test", "test1")
+
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		fmt.Fprintln(w, "{ \"hola\":1 }")
+	})
+
 	http.ListenAndServe(":8080", nil)
 }
 
