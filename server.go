@@ -24,6 +24,15 @@ func main() {
 
 	http.HandleFunc("/producto", producto)
 
+	// Continuamos para bingo con las redirecciones y los errores(algo tan importante para los SEO :) ):
+	http.HandleFunc("/redirect", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/producto", 301)
+	})
+
+	http.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Error chungo", 501)
+	})
+
 	http.ListenAndServe(":8080", nil)
 }
 
