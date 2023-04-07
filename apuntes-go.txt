@@ -196,6 +196,13 @@ http.HandleFunc("/template", func(w http.ResponseWriter, r *http.Request) {
         tmpl.Execute(w, struct{ Saludo string }{ "Hola mundo!!!!" })
         })
 
+Por consola:
+curl 127.0.0.1:8080/templates
+<html><body><h1>Hola Mundo</h1></body></html>%
+
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+
 Certificados SSL en Golang
 
 Y para finalizar, la guinda del pastel, servir el contenido usando un certificado SSL:

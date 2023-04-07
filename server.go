@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -39,6 +40,11 @@ func main() {
 
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		fmt.Fprintln(w, "{ \"hola\":1 }")
+	})
+
+	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	http.HandleFunc("/template", func(w http.ResponseWriter, r *http.Request) {
+		tmpl.Execute(w, struct{ Saludo string }{"Hola mundo!!!!"})
 	})
 
 	http.ListenAndServe(":8080", nil)
