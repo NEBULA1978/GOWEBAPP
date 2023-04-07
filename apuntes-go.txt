@@ -70,6 +70,19 @@ http.HandleFunc("/info", func(w http.ResponseWriter, req *http.Request) {
  fmt.Fprintln(w, "RemoteAddr: ",req.RemoteAddr)
  })
 
+Para ejecutar por consola o en navegador web:
+
+Por consola:
+curl 127.0.0.1:8080/info
+
+Por navegador:
+127.0.0.1:8080/info
+
+Nos muestra el contenido info
+
+/////////////////////////////////////
+/////////////////////////////////////
+
 Lectura de parámetros GET y POST con Go
 
 Para la lectura de parámetros GET y POST nos hemos montado un pequeño mantenimiento de productos en una función, aquí­ tenéis el código:
