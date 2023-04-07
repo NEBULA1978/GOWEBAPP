@@ -1,0 +1,137 @@
+Como crear un servidor Web con Golang
+
+Lo primero ha sido crear el esqueleto de nuestra aplicación con la definición del 'package', importar las dependencias(De momento solo net/http) y crear la función principal con el servidor web:
+
+package main
+
+import (
+        "net/http"
+        )
+
+func main() {
+        http.ListenAndServe(":8080", nil)
+        }
+
+Después hemos visto como compilar el proyecto o arrancarlo directamente con 'run'(Mucho mas útil cuando estamos en entorno de desarrollo):
+
+# Compilar el proyecto
+go build server.go
+./server
+
+# Arrancar el proyecto directamente
+go run server.go
+
+Con esto ya podemos seguir con el tutorial.
+
+Servir contenido estático con Golang
+
+Podemos servir contenido estático con Go solamente añadiendo estas dos lí­neas de código donde creamos un servidor de ficheros pasándole la carpeta en la primera lí­nea y configurando la ruta en la segunda lí­nea:
+
+fs := http.FileServer(http.Dir("./static"))
+http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+Servir contenido dinámico con Golang
+
+Hemos usado dos métodos para servir contenido dinámico, el primero, definir una ruta y crear una función a parte que básicamente devuelve el código HTML desde un string:
+
+/* Definimos la ruta que llamará la función home */
+http.HandleFunc("/", home)
+
+/* Definimos la función home */
+func home(w http.ResponseWriter, r *http.Request) {
+        html := "<html>";
+        html += "<body>";
+        html += "<h1>Hola Mundo</h1>";
+        html += "</body>";
+        html += "</html>";
+        w.Write( []byte(html) )
+        }
+
+Con el segundo método hemos creado la función en el mismo lugar que creamos la ruta y usamos el paquete "fmt"(Que tenéis que agregar en la sección de los imports) para servir el contenido de una forma un poco mas elegante:
+
+http.HandleFunc("/info", func(w http.ResponseWriter, req *http.Request) { 
+ fmt.Fprintln(w, "Host: ",req.Host)
+ fmt.Fprintln(w, "URI: ",req.RequestURI)
+ fmt.Fprintln(w, "Method: ",req.Method)
+ fmt.Fprintln(w, "RemoteAddr: ",req.RemoteAddr)
+ })
+
+Lectura de parámetros GET y POST con Go
+
+Para la lectura de parámetros GET y POST nos hemos montado un pequeño mantenimiento de productos en una función, aquí­ tenéis el código:
+
+var productos []string
+
+func producto(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	add, okForm := r.Form["add"] 
+    	if okForm && len(add) == 1 {
+		productos = append( productos, string(add[0]) )
+        	w.Write( []byte("Producto añadido correctamente") )
+
+        	return
+    		}
+
+	prod, ok := r.URL.Query()["prod"]
+    	if ok && len(prod) == 1 {
+		pos, err := strconv.Atoi(prod[0])
+
+		if err!= nil {
+			return
+			}
+
+	        html := "<html>";
+	        html += "<body>";
+	        html += "<h1>Producto "+productos[ pos ]+"</h1>";
+	        html += "</body>";
+	        html += "</html>";
+
+	        w.Write( []byte(html) )
+
+        	return
+    		}
+
+        html := "<html>";
+        html += "<body>";
+        html += "<h1>Total Productos "+strconv.Itoa( len( productos ) )+"</h1>";
+        html += "</body>";
+        html += "</html>";
+        }
+
+Redirecciones y errores en servidores web con Go
+
+Continuamos para bingo con las redirecciones y los errores(algo tan importante para los SEO :) ):
+
+http.HandleFunc("/redirect", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/producto", 301)
+		})
+
+	http.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Error chungo", 501)
+		})
+
+Servir cabeceras en GoLang
+
+Tenemos dos métodos para añadir cabeceras en nuestras aplicaciones Go: "Add" que añadirá la cabecera tantas veces como queramos y "Set" que solo pondrá una vez la cabecera:
+
+http.HandleFunc("/cabeceras", func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Add("Test", "test1")
+
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		fmt.Fprintln(w, "{ \"hola\":1 }")
+		})
+
+Uso de plantillas en Go
+
+En los tiempos que corren es super importante usar plantillas para implementar las vistas y tenerlas separadas de los controladores(Patrón MVC, modelo-vista-controlador). Tendremos que importar el módulo "html/templates" y aquí­ tenéis el código:
+
+tmpl := template.Must(template.ParseFiles("template.html"))
+http.HandleFunc("/template", func(w http.ResponseWriter, r *http.Request) {
+        tmpl.Execute(w, struct{ Saludo string }{ "Hola mundo!!!!" })
+        })
+
+Certificados SSL en Golang
+
+Y para finalizar, la guinda del pastel, servir el contenido usando un certificado SSL:
+
+http.ListenAndServeTLS(":8443", "certs/fullchain.pem", "certs/privkey.pem", nil)
